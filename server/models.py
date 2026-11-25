@@ -25,10 +25,12 @@ class User(db.Model):
 
   # Build authenticate method that uses bcrypt.check_password_hash()
   def authenticate(self, password):
-      pass
+    return bcrypt.check_password_hash(
+      self._password_hash, password.encode('utf-8')
+    )
 
   def __repr__(self):
-      return f'User {self.username}, ID: {self.id}'
+    return f'User {self.username}, ID: {self.id}'
 
 class UserSchema(Schema):
   id = fields.Int()
