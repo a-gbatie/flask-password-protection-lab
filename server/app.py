@@ -42,9 +42,27 @@ class CheckSession(Resource):
     
     return {}, 204
   
+class Login(Resource):
+
+  def post(self):
+    data = request.get_json()
+
+    username = data.get('username')
+    password = data.get('password')
+
+    user = User.query.filter(User.username == username).first()
+
+    if user and password and user.authenticate(password):
+      session['user_id'] = user.id
+
+      return UserSchema().dump(user), 200
+
+    return {'message': 'Invalid username or password'}, 401
+  
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(Signup, '/signup')
 api.add_resource(CheckSession, '/check_session')
+api.add_resource(Login, '/login')
 
 if __name__ == '__main__':
   app.run(port=5555, debug=True)
